@@ -1,8 +1,7 @@
 import discord
 import os
 from discord.ext import commands
-import requests
-import json
+import map
 
 secret = os.environ['Token']
 
@@ -21,8 +20,13 @@ async def on_message(message):
 
   if message.author == client.user:
     return
+  
   if msg.startswith('$hi'):
     await message.channel.send('Hello!')
 
+  if msg.startswith('$netscape map'):
+    await message.channel.send(map.output_map())
+
+  
 client.run(secret)
 
