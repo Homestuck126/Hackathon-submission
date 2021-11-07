@@ -5,17 +5,43 @@ from discord.ext import commands
 from map import MapNode
 from map import Map
 from discord.utils import get
-
+import requests
+custom_prefixes = {}
+global customtime
+customtime = 100
+global upcount
+upcount = 0
+global downcount
+downcount = 0
+global rightcount
+rightcount = 0
+global leftcount
+leftcount = 0
 start = False
 secret = os.environ['Token']
+Tenor_Token = os.environ['Tenor_Token']
 def generatemap():
   Home = MapNode("This is Home")
+  Lefttown = MapNode("This is LeftTown")
   Uptown = MapNode("This is UpTown")
+  Home.insert(Lefttown ,3) 
   Home.insert(Uptown, 1)
   Downtown = MapNode("This is DownTown")
   Home.insert(Downtown, 4)
+  Righttown = MapNode("This is RightTown")
+  Home.insert(Righttown, 2)
   Current = Map(Home)
   return Current
+
+def get_gif(searchTerm): 
+
+    response = requests.get("https://g.tenor.com/v1/search?q={}&key={}&limit=1".format(searchTerm, Tenor_Token))
+
+    data = response.json()  
+
+         
+    return data['results'][0]['media'][0]['gif']['url']
+
 
 
 client = commands.Bot(command_prefix = "$")
@@ -46,19 +72,20 @@ async def adventure(message , Current):
   await message.channel.send("Welcome to your grand new adventure, work together with your friends to explore the world")
   while True:
     output = await message.channel.send(Current.Curr.dataval)
+    gif_url = get_gif(Current.Curr.dataval) 
+    embed = discord.Embed()
+    embed.set_image(url=gif_url)
+    await message.channel.send(embed=embed)
     await output.add_reaction("▶️")
     await output.add_reaction("◀️")
     await output.add_reaction("🔽")
     await output.add_reaction("🔼")
-    await asyncio.sleep(10)
+    time = customtime
+    await asyncio.sleep(100)
     up = upcount
     down = downcount
     right = rightcount
     left = leftcount
-    await message.channel.send(up)
-    await message.channel.send(down)
-    await message.channel.send(right)
-    await message.channel.send(left)
     check = False
     numbers = [right,left,up,down]
     numbers.sort(reverse=True)
@@ -113,11 +140,14 @@ async def on_message(message):
     await message.channel.send('Hello!')
 
 
-  if msg.startswith('$adventure'):  
+  if msg.startswith('$adventure') and not (msg.startswith('$adventure time')):  
     client.loop.create_task(adventure(message , generatemap()))
     await message.channel.send('The adventure has begun.')
   
-      
+  if msg.startswith('$adventure time'):
+    global customtime
+    await message.channel.send('Inserted time')
+    customtime = (message.content.lower()[16:])
   
 client.run(secret)
 
