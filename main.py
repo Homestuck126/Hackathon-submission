@@ -10,13 +10,16 @@ start = False
 secret = os.environ['Token']
 def generatemap():
   Home = MapNode("This is Home")
+  Lefttown = MapNode("This is LeftTown")
   Uptown = MapNode("This is UpTown")
+  Home.insert(Lefttown ,3) 
   Home.insert(Uptown, 1)
   Downtown = MapNode("This is DownTown")
   Home.insert(Downtown, 4)
+  Righttown = MapNode("This is RightTown")
+  Home.insert(Righttown, 2)
   Current = Map(Home)
   return Current
-
 
 client = commands.Bot(command_prefix = "$")
 @client.event
