@@ -81,7 +81,7 @@ async def adventure(message , Current):
     await output.add_reaction("🔽")
     await output.add_reaction("🔼")
     time = customtime
-    await asyncio.sleep(100)
+    await asyncio.sleep(10)
     up = upcount
     down = downcount
     right = rightcount
